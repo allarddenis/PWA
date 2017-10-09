@@ -13,9 +13,9 @@ export class SessionListComponent implements OnInit {
     sessions: Session[] = [];
 
     constructor(sessionService: SessionService) {
-        sessionService.fetchData()
+        sessionService.getSessions()
         .then(sessions => {
-            this.sessions = Object.keys(sessions).map((k) => sessions[k])
+            this.sessions = sessions
         })
     }
 

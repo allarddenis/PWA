@@ -31,7 +31,7 @@
                             localforage.setItem(key, sessions[key])
                         }
                     })
-                ]))
+            ]))
     })
 
     self.addEventListener('activate', event => {
@@ -73,7 +73,7 @@
                 })
                 .catch(error => {
                     console.log("oops");
-                }));
+                }))
     });
 
 })()

@@ -5,21 +5,17 @@ import 'rxjs/add/operator/catch';
 
 import { Session } from './session'
 
+import * as localForage from "localforage";
+
 @Injectable()
 export class SessionService {
 
     constructor() {
     }
 
-    fetchData(){
-        fetch('/assets/sessions.json')
-            .then(function(response) {
-                return response.json()
-            }).then(function(json) {
-                console.log('parsed json', json)
-            }).catch(function(ex) {
-                console.log('parsing failed', ex)
-            })
+    fetchData(): Promise<any> {
+        return fetch('https://raw.githubusercontent.com/DevInstitut/conference-data/master/sessions.json')
+            .then(resp => resp.json())
     }
-    
+
 }

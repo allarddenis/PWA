@@ -10,10 +10,13 @@ import { SessionService} from './session.service'
 
 export class SessionListComponent implements OnInit {
 
-    sessions: Session[];
+    sessions: Session[] = [];
 
     constructor(sessionService: SessionService) {
-        sessionService.fetchData();
+        sessionService.fetchData()
+        .then(sessions => {
+            this.sessions = Object.keys(sessions).map((k) => sessions[k])
+        })
     }
 
     ngOnInit() { }

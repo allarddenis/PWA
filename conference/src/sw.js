@@ -1,10 +1,10 @@
 (function () {
 
-    importScripts("https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js")
-        ;
+    importScripts("https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js");
 
     const FILES_TO_CACHE = [
         'main.bundle.js',
+        'sw.js',
         'inline.bundle.js',
         'polyfills.bundle.js',
         'styles.bundle.js',
@@ -23,14 +23,15 @@
                     .then(cache => {
                         return cache.addAll(FILES_TO_CACHE);
                     }),
-                fetch('https://raw.githubusercontent.com/DevInstitut/conference-data/master/speakers.json')
+                fetch('https://raw.githubusercontent.com/DevInstitut/conference-data/master/sessions.json')
                     .then(resp => resp.json())
-                    .then(speakers => {
-                        localforage.config({ storeName: 'speakers' })
-                        for (key in speakers) {
-                            localforage.setItem(key, speakers[key])
+                    .then(sessions => {
+                        localforage.config({ storeName: 'sessions' })
+                        for (key in sessions) {
+                            localforage.setItem(key, sessions[key])
                         }
-                    })]))
+                    })
+                ]))
     })
 
     self.addEventListener('activate', event => {

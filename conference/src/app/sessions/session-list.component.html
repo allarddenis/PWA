@@ -1,1 +1,6 @@
 <h2>la liste</h2>
+<ul>
+    <li *ngFor="let session of sessions">
+        {{ session.id }} : {{ session.title }}
+    </li>
+</ul>

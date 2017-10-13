@@ -10,7 +10,7 @@ import { SessionService } from './session.service'
 @Component({
     selector: 'session-details',
     template: `
-    <h1 *ngIf='session'> {{session.id}} : {{session.title}} </h1>
+    <h2 *ngIf='session'> {{session.id}} : {{session.title}} </h2>
     `
 })
 
@@ -18,8 +18,7 @@ export class SessionDetailsComponent implements OnInit {
 
     session: Session;
 
-    constructor(private route: ActivatedRoute, private sessionService: SessionService) {
-    }
+    constructor(private route: ActivatedRoute, private sessionService: SessionService) { }
 
     ngOnInit() {
         this.route.paramMap

@@ -14,25 +14,7 @@
 
     const STATIC_CACHE_NAME = 'pages-cache-v2';
 
-    self.addEventListener('install', event => {
-        console.log('Installation du Service Worker...');
-        console.log('Mise en cache des ressources');
-        event.waitUntil(
-            Promise.all([
-                caches.open(STATIC_CACHE_NAME)
-                    .then(cache => {
-                        return cache.addAll(FILES_TO_CACHE);
-                    }),
-                fetch('https://raw.githubusercontent.com/DevInstitut/conference-data/master/sessions.json')
-                    .then(resp => resp.json())
-                    .then(sessions => {
-                        localforage.config({ storeName: 'sessions' })
-                        for (key in sessions) {
-                            localforage.setItem(key, sessions[key])
-                        }
-                    })
-            ]))
-    })
+    self.addEventListener('install', event => {})
 
     self.addEventListener('activate', event => {
         console.log('Activating new service worker...');
@@ -59,21 +41,48 @@
                     console.log(event.request.url, 'servi depuis le cache');
                     return response;
                 }
-                console.log(event.request.url, 'servi depuis le réseau'); return fetch(event.request)
-            })
-                // rubrique à ajouter 
-                .then(function (response) {
-                    return caches.open(STATIC_CACHE_NAME).then(cache => {
-                        // mise en cache des ressources qui ne contiennent pas no.cache
-                        if (event.request.url.indexOf('no.cache') < 0) {
-                            cache.put(event.request.url, response.clone());
+                console.log(event.request.url, 'servi depuis le réseau');
+                return fetch(event.request).then(function (resp) {
+
+                    if (event.request.url.indexOf('no.cache') > 0) {
+                        return resp;
+                    }
+
+                    const lastUrlPart = event.request.url.split('/')[event.request.url.split('/').length - 1];
+
+                    // Saving all json files into IndexedDB
+                    if (lastUrlPart.indexOf('.json') > 0) {
+
+                        console.log('Saving json', lastUrlPart);
+
+                        const dataNameInCache = lastUrlPart.split('.')[0];
+
+                        localforage.config({ storeName: 'json' })
+                        var responseClone = resp.clone();
+
+                        responseClone.json().then(data => {
+                            localforage.setItem(dataNameInCache, data)
+                        })
+                    }
+                    else if (lastUrlPart.indexOf('.js') > 0) {
+
+                        if(FILES_TO_CACHE.indexOf(lastUrlPart)>0)
+                        {
+                            console.log('Saving js', lastUrlPart);
+                            caches.open(STATIC_CACHE_NAME).then(cache =>
+                                cache.add(lastUrlPart)
+                            )
                         }
-                        return response;
-                    });
-                })
-                .catch(error => {
-                    console.log("oops");
-                }))
-    });
+                    }
+                    else {
+                        console.log('Not caching a file', lastUrlPart);
+                        //cache.addAll(lastUrlPart);
+                    }
+                    // else{
+                    return resp;
+                });
+            })
+        )
+    })
 
 })()

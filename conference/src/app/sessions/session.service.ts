@@ -5,16 +5,15 @@ import 'rxjs/add/operator/catch';
 
 import { Session } from './session'
 
-import * as localForage from "localforage";
-
 @Injectable()
 export class SessionService {
 
-    constructor() {
-    }
+    jsonUrl: string = 'https://raw.githubusercontent.com/DevInstitut/conference-data/master/sessions.json';
+
+    constructor() { }
 
     getSessions(): Promise<Session[]> {
-        return fetch('https://raw.githubusercontent.com/DevInstitut/conference-data/master/sessions.json')
+        return fetch(this.jsonUrl)
             .then(resp => resp.json())
             .then(sessions =>
                 Object.keys(sessions).map((k) => sessions[k])
@@ -32,5 +31,4 @@ export class SessionService {
             }
         )
     }
-
 }
